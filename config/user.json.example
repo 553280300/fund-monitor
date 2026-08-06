@@ -1,0 +1,5 @@
+{
+  "name": "用户昵称",
+  "subscribe_until": "2026-09-01",
+  "channels": ["wechat", "telegram"]
+}

@@ -1,0 +1,2 @@
+[console_scripts]
+fund-monitor = fund_monitor.launcher:main

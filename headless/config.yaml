@@ -1,0 +1,17 @@
+timezone: Asia/Shanghai
+
+assets:
+- name: 科创50
+  code: sh000688
+  kind: cn_index
+  threshold: -1.5
+- name: 银华上证科创板100ETF联接C
+  code: jj019860
+  kind: fund
+- name: 沪深300
+  code: sh000300
+  kind: cn_index
+
+channels:
+  pushplus:
+    token_env: PUSHPLUS_TOKEN
