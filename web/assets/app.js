@@ -150,6 +150,9 @@ async function load() {
     renderScheduler(scheduler);
     renderChannels(channels);
     ghConfig.textContent = ghconfig.content || '（暂无资产）';
+    if (!ghRepo.value && ghconfig.repo) {
+      ghRepo.value = ghconfig.repo;
+    }
   } catch (exception) {
     health.textContent = '服务不可用';
     grid.innerHTML = '<p class="empty">无法读取本地服务，请重启应用后重试。</p>';

@@ -73,5 +73,5 @@ def test_ghconfig_reports_default_repo(tmp_path) -> None:
         response = client.get("/api/v1/ghconfig")
 
     assert response.status_code == 200
-    assert response.json()["repo"] == "Frog755/fund-monitor-headless"
+    assert response.json()["repo"] == "Frog755/fund-monitor"
     database.close()
