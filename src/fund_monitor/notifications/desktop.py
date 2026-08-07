@@ -11,7 +11,7 @@ from fund_monitor.domain import ChannelType, NotificationMessage
 
 class DesktopChannel:
     channel_type = ChannelType.DESKTOP
-    _PANEL_URL = "http://127.0.0.1:8420"
+    _PANEL_URL = "http://127.0.0.1:8420/#report"
 
     def __init__(self, *, channel_id: int = 0, name: str = "Desktop", runner: Callable[[str], None] | None = None) -> None:
         self.channel_id, self.name = channel_id, name
@@ -29,8 +29,11 @@ class DesktopChannel:
             "$n=New-Object System.Windows.Forms.NotifyIcon; "
             "$n.Icon=[System.Drawing.SystemIcons]::Information; $n.Visible=$true; "
             f"$n.BalloonTipTitle='{title}'; $n.BalloonTipText='{body}'; "
-            f"$n.BalloonTipClicked={{ Start-Process '{self._PANEL_URL}' }}; "
-            "$n.ShowBalloonTip(8000); Start-Sleep -Seconds 10; $n.Dispose()"
+            "$n.Add_BalloonTipClicked({ Start-Process '" + self._PANEL_URL + "'; $n.Dispose() }); "
+            "$n.ShowBalloonTip(8000); "
+            "$sw=[Diagnostics.Stopwatch]::StartNew(); "
+            "while($sw.ElapsedMilliseconds -lt 10000){ [System.Windows.Forms.Application]::DoEvents(); Start-Sleep -Milliseconds 80 }; "
+            "$n.Dispose()"
         )
         await asyncio.to_thread(self._runner, script)
 

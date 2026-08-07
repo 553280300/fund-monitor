@@ -361,7 +361,7 @@ class RunRepository:
     def recent(self, limit: int = 10) -> list[dict[str, Any]]:
         with self._lock:
             rows = self._connection.execute(
-                "SELECT id, ran_at, period, report_json FROM monitor_runs ORDER BY id DESC LIMIT ?",
+                "SELECT id, ran_at, period, report_json, report_text FROM monitor_runs ORDER BY id DESC LIMIT ?",
                 (limit,),
             ).fetchall()
         return [dict(row) for row in rows]

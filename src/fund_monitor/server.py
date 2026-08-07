@@ -13,7 +13,7 @@ from fund_monitor.providers.eastmoney import EastmoneyProvider
 from fund_monitor.providers.tencent import TencentProvider
 from fund_monitor.providers.yahoo import YahooProvider
 from fund_monitor.providers.search import EastmoneySearchProvider
-from fund_monitor.report import build_report, render_text
+from fund_monitor.report import build_report, render_markdown, render_text
 from fund_monitor.scheduler import MonitorScheduler
 from fund_monitor.notifications.configured import ConfiguredDispatcher
 from fund_monitor.secrets import SecretStore
@@ -38,7 +38,8 @@ class ReportPusher:
 
     async def push(self, run: RunResult) -> None:
         report = build_report(run, schedule_times=self._schedule_times, timezone_name=self._timezone_name)
-        message = NotificationMessage(title=report["title"], body=render_text(report))
+        # Push the WeChat-friendly Markdown variant to channels.
+        message = NotificationMessage(title=report["title"], body=render_markdown(report))
         # Report delivery failures are isolated per channel and never block monitoring.
         try:
             await self._dispatcher.dispatch(message)

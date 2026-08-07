@@ -137,13 +137,14 @@ function renderReport(result) {
 
 async function load() {
   try {
-    const [status, overview, assets, scheduler, channels, ghconfig] = await Promise.all([
+    const [status, overview, assets, scheduler, channels, ghconfig, runs] = await Promise.all([
       request('/api/health'),
       request('/api/v1/assets/overview'),
       request('/api/v1/assets'),
       request('/api/v1/monitor/status'),
       request('/api/v1/channels'),
       request('/api/v1/ghconfig'),
+      request('/api/v1/monitor/runs'),
     ]);
     health.textContent = status.status === 'healthy' ? '服务运行正常' : '服务需要注意';
     renderFunds(overview, assets);
@@ -152,6 +153,9 @@ async function load() {
     ghConfig.textContent = ghconfig.content || '（暂无资产）';
     if (!ghRepo.value && ghconfig.repo) {
       ghRepo.value = ghconfig.repo;
+    }
+    if (runs && runs.length) {
+      renderReport({ text: runs[0].report_text });
     }
   } catch (exception) {
     health.textContent = '服务不可用';
@@ -365,12 +369,15 @@ function moveTabIndicator(button) {
   tabIndicator.style.transform = `translateX(${btnRect.left - navRect.left - 6}px)`;
 }
 
-function activateTab(button) {
+function activateTab(button, options = {}) {
   tabButtons.forEach(item => item.classList.toggle('active', item === button));
   moveTabIndicator(button);
   document.querySelectorAll('.tab-content').forEach(content => {
     content.classList.toggle('active', content.id === `tab-${button.dataset.tab}`);
   });
+  if (options.updateHash !== false && history.replaceState) {
+    history.replaceState(null, '', `#${button.dataset.tab}`);
+  }
 }
 
 tabButtons.forEach(button => button.addEventListener('click', () => activateTab(button)));
@@ -378,8 +385,15 @@ window.addEventListener('resize', () => {
   const active = tabNav.querySelector('button.active');
   if (active) moveTabIndicator(active);
 });
-const initialTab = tabNav.querySelector('button.active');
-if (initialTab) requestAnimationFrame(() => moveTabIndicator(initialTab));
+
+// Initialize once, after the layout settles: honor a deep-link hash (#report / #monitor / #settings)
+// then place the pill on the active tab. Doing this in a single animation frame avoids the
+// indicator being reset to the first tab after a hash-driven switch.
+requestAnimationFrame(() => {
+  const hash = (location.hash || '').replace('#', '');
+  const target = tabButtons.find(button => button.dataset.tab === hash) || tabNav.querySelector('button.active');
+  activateTab(target, { updateHash: false });
+});
 
 document.querySelector('#refresh').addEventListener('click', load);
 load();

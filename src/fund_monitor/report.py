@@ -189,6 +189,66 @@ def render_text(report: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def render_markdown(report: dict[str, Any]) -> str:
+    """WeChat-friendly Markdown variant of the report (bold headings + lists)."""
+    lines: list[str] = []
+    lines.append(f"📊 **{report['title']}**")
+    lines.append("")
+
+    lines.append("🔹 **本次结果**")
+    for asset in report["results"]:
+        if asset["error"]:
+            lines.append(f"🔍 **{asset['name']}** ({asset['code']})")
+            lines.append(f"状态: ⚠️ 数据源异常 — {asset['error']}")
+            lines.append("")
+            continue
+        lines.append(f"🔍 **{asset['name']}** ({asset['code']})")
+        lines.append(f"当前: {asset['value']} ｜ 涨跌幅: {asset['change_percent']}")
+        icon = "🔔" if asset["status"] == "alert" else "✅"
+        lines.append(f"状态: {icon} {asset['status_label']}")
+        lines.append("")
+    if not report["results"]:
+        lines.append("（暂无监控资产）")
+        lines.append("")
+
+    lines.append("🔹 **历史对比（vs 上次）**")
+    any_history = any(asset["previous_change_percent"] != "-" for asset in report["results"])
+    if not any_history:
+        lines.append("本次为首次监控，无历史数据对比。")
+    else:
+        for asset in report["results"]:
+            if asset["previous_change_percent"] == "-":
+                lines.append(f"- {asset['name']}: — → {asset['change_percent']}（首次）")
+                continue
+            lines.append(
+                f"- {asset['name']}: {asset['previous_change_percent']} → {asset['change_percent']}（{asset['delta_percent']}）"
+            )
+    lines.append("")
+
+    lines.append("🔹 **触发信号**")
+    triggered = [signal for signal in report["signals"] if signal["triggered"]]
+    if not triggered:
+        lines.append("✅ 无触发信号，保持观望。")
+        for signal in report["signals"]:
+            lines.append(f"- {signal['name']}: {signal['current']} 未到 {signal['threshold']} ❌")
+    else:
+        lines.append(f"🚨 共 {len(triggered)} 个信号触发！")
+        for signal in triggered:
+            lines.append(f"- {signal['name']}: {signal['current']} 已达 {signal['threshold']} ⚠️")
+    lines.append("")
+
+    lines.append("🔹 **监控时间节点**")
+    for node in report["nodes"]:
+        marker = "✅" if node["state"] == "done" else "⬜"
+        suffix = " ← 本次" if node["current"] else ""
+        lines.append(f"- {marker} {node['time']}{suffix}")
+    lines.append("")
+
+    if report["errors"]:
+        lines.append(f"⚠️ {report['errors']} 个数据源异常，请检查。")
+    return "\n".join(lines)
+
+
 def render_html(report: dict[str, Any]) -> str:
     """Render the structured report as safe HTML for the local panel."""
     def esc(value: Any) -> str:
