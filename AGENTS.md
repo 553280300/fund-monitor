@@ -4,15 +4,17 @@
 
 - This is a Windows-first, local-first fund and market monitoring product for non-technical users.
 - It provides information and alerts only. It must not generate trading instructions, investment advice, or automated orders.
-- The local desktop deployment is the v1 delivery target. Hermes is optional and must not be required for normal operation.
+- Two deployment modes, each standalone and combinable: (1) the local Windows desktop app; (2) the GitHub Actions cloud monitor (`headless/` + `.github/workflows/`). The panel's "sync to GitHub" keeps both configs aligned. Hermes is not part of the product.
 
 ## Repository Layout
 
 - `src/fund_monitor/`: application packages. Keep domain logic independent from FastAPI and browser code.
 - `tests/`: automated tests that mirror `src/fund_monitor/`.
-- `config/`: versioned examples only. Never commit a real user configuration or credentials.
 - `docs/`: user-facing documents and approved technical specifications.
-- `scripts/`: developer, packaging, and maintenance scripts only; no product business logic.
+- `headless/`: cloud (GitHub Actions) monitor scripts, config, and state; used by `.github/workflows/`.
+- `.github/workflows/`: cloud workflows — `monitor.yml` (scheduled monitoring + report push) and `update-config.yml` (web-form config generation).
+- `packaging/`: PyInstaller spec and release scripts.
+- `web/`: local management panel (static HTML/JS served by the local API).
 - `build/` and `dist/`: generated packaging output; do not hand-edit or commit.
 
 ## Architecture Rules
