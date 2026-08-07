@@ -1,0 +1,37 @@
+name: update-config
+
+on:
+  workflow_dispatch:
+    inputs:
+      assets:
+        description: '基金/指数名称或代码，多个用逗号分隔；可加阈值，如：科创50:-1.5, 019860, 沪深300'
+        required: true
+        default: '科创50:-1.5, 沪深300:-1.0'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install httpx pyyaml
+
+      - name: Generate config
+        run: python headless/generate_config.py --assets "${{ github.event.inputs.assets }}"
+
+      - name: Commit updated config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add headless/config.yaml
+          git commit -m "Update monitor config from web form" || echo "no changes to commit"
+          git push

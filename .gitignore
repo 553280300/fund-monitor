@@ -16,3 +16,5 @@ __pycache__/
 *.log
 /build/
 /dist/
+headless/state.json
+headless/last-report.md

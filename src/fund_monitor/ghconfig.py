@@ -16,7 +16,7 @@ import subprocess
 import httpx
 import yaml
 
-REPO = "Frog755/fund-monitor-headless"
+REPO = "Frog755/fund-monitor"
 CONFIG_PATH = "headless/config.yaml"
 COMMIT_MESSAGE = "Update monitor config from local panel"
 _API = "https://api.github.com"

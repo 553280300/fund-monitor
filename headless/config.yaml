@@ -1,16 +1,26 @@
 timezone: Asia/Shanghai
+schedule:
+  - "02:00"
+  - "06:00"
+  - "10:00"
+  - "14:00"
 
 assets:
-- name: 科创50
-  code: sh000688
-  kind: cn_index
-  threshold: -1.5
-- name: 银华上证科创板100ETF联接C
-  code: jj019860
-  kind: fund
-- name: 沪深300
-  code: sh000300
-  kind: cn_index
+  - name: 科创100指数
+    code: jj019860
+    kind: fund
+    threshold: -1.5
+    action: 加仓 50-100 元
+  - name: S&P 500
+    code: jj017640
+    kind: fund
+    threshold: -0.8
+    action: 15:00 前申购
+  - name: 建信新兴市场混合(QDII)C
+    code: jj018147
+    kind: fund
+    threshold: -1.0
+    action: 活期提单笔
 
 channels:
   pushplus:
