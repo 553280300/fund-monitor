@@ -6,21 +6,15 @@ schedule:
   - "14:00"
 
 assets:
-  - name: 科创100指数
-    code: jj019860
-    kind: fund
-    threshold: -1.5
-    action: 加仓 50-100 元
-  - name: S&P 500
-    code: jj017640
-    kind: fund
-    threshold: -0.8
-    action: 15:00 前申购
-  - name: 建信新兴市场混合(QDII)C
-    code: jj018147
-    kind: fund
-    threshold: -1.0
-    action: 活期提单笔
+- name: 财通成长优选混合C
+  code: jj021528
+  kind: fund
+- name: 科创100ETF南方
+  code: sh588900
+  kind: etf
+- name: 建信新兴市场混合(QDII)C
+  code: jj018147
+  kind: fund
 
 channels:
   pushplus:
