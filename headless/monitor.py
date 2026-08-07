@@ -120,31 +120,29 @@ def build_report(
     # ① 各标的状态
     for row in rows:
         if row["error"]:
-            lines.append(f"🔍 {row['name']} ({row['code']})")
-            lines.append(f"   状态: ⚠️ 数据源异常 — {row['error']}")
+            lines.append(f"🔍 **{row['name']}** ({row['code']})")
+            lines.append(f"状态: ⚠️ 数据源异常 — {row['error']}")
             lines.append("")
             continue
-        lines.append(f"🔍 {row['name']} ({row['code']})")
-        lines.append(f"   当前: {row['value_text']}  |  涨跌幅: {row['change_text']}")
+        lines.append(f"🔍 **{row['name']}** ({row['code']})")
+        lines.append(f"当前: {row['value_text']} ｜ 涨跌幅: {row['change_text']}")
         state_icon = "🔔" if row["triggered"] else "✅"
-        lines.append(f"   状态: {state_icon} {row['status_text']}")
+        lines.append(f"状态: {state_icon} {row['status_text']}")
         lines.append("")
     if not rows:
         lines.append("（暂无监控资产）")
         lines.append("")
 
-    # ② 历史对比（vs 上次）
+    # ② 历史对比（vs 上次）——列表形式，微信/消息渲染更友好
     lines.append(bar)
     lines.append("")
     lines.append("📆 历史对比（vs 上次）")
-    lines.append("| 标的 | 上次 | 本次 | 变化 |")
-    lines.append("|------|------|------|:----:|")
     for row in rows:
         if row["previous_change_text"] == "-":
-            lines.append(f"| {row['name']} | — | {row['change_text']} | — |")
+            lines.append(f"- {row['name']}: — → {row['change_text']}（首次）")
             continue
         lines.append(
-            f"| {row['name']} | {row['previous_change_text']} | {row['change_text']} | {row['delta_icon']} |"
+            f"- {row['name']}: {row['previous_change_text']} → {row['change_text']}（{row['delta_icon']}）"
         )
     lines.append("")
 
@@ -154,17 +152,17 @@ def build_report(
     lines.append("⏰ 今日监控节点")
     for slot in schedule:
         if slot == period:
-            lines.append(f"   ✅ {slot} ← 本次")
+            lines.append(f"- ✅ {slot} ← 本次")
         elif slot < period:
-            lines.append(f"   ✅ {slot} — 已完成")
+            lines.append(f"- ✅ {slot} 已完成")
         else:
-            lines.append(f"   ⏳ {slot} — 待执行")
+            lines.append(f"- ⏳ {slot} 待执行")
     lines.append("")
 
     # ④ 阈值参考
     lines.append(bar)
     lines.append("")
-    lines.append("📏 阈值参考：")
+    lines.append("📏 阈值参考")
     for row in rows:
         if row["threshold"] is None:
             continue
