@@ -32,6 +32,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add headless/state.json headless/last-report.md
+          git add -f headless/state.json headless/last-report.md
           git commit -m "chore: update monitor state" || echo "no changes to commit"
           git push
