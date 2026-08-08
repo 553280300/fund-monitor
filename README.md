@@ -66,15 +66,13 @@
 
 ## 🎬 演示
 
-<!-- TODO: 上传 1 张面板截图 + 1 张微信推送截图，替换下方占位 -->
-
 **① 监控面板 — 实时行情与告警状态**
 
-![面板截图占位](docs/screenshots/dashboard.png "Fund Monitor 管理面板")
+![Fund Monitor 管理面板](docs/screenshots/dashboard.png "管理面板，添加基金、配置阈值、查看实时行情")
 
 **② 微信推送 — 大跌自动提醒**
 
-![微信推送截图占位](docs/screenshots/wechat-push.png "大跌自动推送到微信")
+![大跌自动推送到微信](docs/screenshots/wechat-push.png "大跌自动推送到微信，实时通知")
 
 ---
 
